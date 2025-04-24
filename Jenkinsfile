@@ -5,6 +5,7 @@ pipeline {
         PATH = "C:/terraform;${env.PATH}"   // Ensure Terraform binary is included
         TF_VAR_aws_access_key = credentials('AWS_ACCESS_KEY')
         TF_VAR_aws_secret_key = credentials('AWS_SECRET_KEY')
+         TF_VAR_aws_region     = 'us-west-2'
     }
 
     stages {
