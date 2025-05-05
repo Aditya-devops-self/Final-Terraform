@@ -6,7 +6,7 @@ secret_key = var.aws_secret_key
 }
 
 resource "aws_instance" "example" {
-  ami           = "ami-05572e392e80aee89"  
+  ami           = "ami-07b0c09aab6e66ee9"  
   instance_type = "t2.micro"
 }
 
