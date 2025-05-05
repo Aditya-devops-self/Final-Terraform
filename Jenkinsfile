@@ -2,28 +2,31 @@ pipeline {
     agent any
 
     environment {
-        AWS_ACCESS_KEY_ID     = credentials('aws-access-key')
-        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
-        TERRAFORM_PATH        = 'C:\\Terraform\\terraform.exe'
+        TERRAFORM_PATH = 'C:\\Terraform\\terraform.exe'
     }
 
     stages {
         stage('Terraform Init') {
             steps {
-                bat """
-                set AWS_ACCESS_KEY_ID=${env.AWS_ACCESS_KEY_ID}
-                set AWS_SECRET_ACCESS_KEY=${env.AWS_SECRET_ACCESS_KEY}
-                ${env.TERRAFORM_PATH} init
-                """
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-creds']]) {
+                    bat """
+                    set AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY_ID%
+                    set AWS_SECRET_ACCESS_KEY=%AWS_SECRET_ACCESS_KEY%
+                    ${env.TERRAFORM_PATH} init
+                    """
+                }
             }
         }
+
         stage('Terraform Plan') {
             steps {
-                bat """
-                set AWS_ACCESS_KEY_ID=${env.AWS_ACCESS_KEY_ID}
-                set AWS_SECRET_ACCESS_KEY=${env.AWS_SECRET_ACCESS_KEY}
-                ${env.TERRAFORM_PATH} plan
-                """
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-creds']]) {
+                    bat """
+                    set AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY_ID%
+                    set AWS_SECRET_ACCESS_KEY=%AWS_SECRET_ACCESS_KEY%
+                    ${env.TERRAFORM_PATH} plan -var="aws_region=us-east-1"
+                    """
+                }
             }
         }
     }
